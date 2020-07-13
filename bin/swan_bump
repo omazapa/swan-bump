@@ -1,0 +1,97 @@
+#!/bin/bash
+
+function show_usage()
+{
+    echo "ex:  ./swan_bump -n=HdfsBrowser -v=1.1.1"
+    echo "ex:  ./swan_bump --pkg-name=HdfsBrowser --pkg-version=1.1.1"
+    exit 1
+}
+
+for i in "$@"
+do
+case $i in
+    -n=*|--pkg-name=*)
+    PKG_NAME="${i#*=}"
+    shift # past argument=value
+    ;;
+    -v=*|--pkg-version=*)
+    PKG_VERSION="${i#*=}"
+    shift # past argument=value
+    ;;
+    *)
+          # unknown option
+          echo "unknown parameters"
+          show_usage
+    ;;
+esac
+done
+
+if ["$PKG_NAME" == ""]
+then 
+    echo "Error: -n --pkg-name option required"
+    show_usage
+fi
+
+if ["$PKG_VERSION" == ""]
+then 
+    echo "Error: -n --pkg-name option required"
+    show_usage
+fi
+
+echo "======  Creating SWAN Pkg Release ======"
+echo "Package Name  = ${PKG_NAME}"
+echo "Package Version = ${PKG_VERSION}"
+echo "Tag  = ${PKG_NAME}/${PKG_VERSION}"
+
+
+echo ""
+echo "Updating ${PKG_NAME}/setup.py"
+sed -i  "s/`grep version ${PKG_NAME}/setup.py | cut -d'=' -f 2 | sed 's/,//g'`/'${PKG_VERSION}'/g"  ${PKG_NAME}/setup.py
+
+
+echo ""
+echo "Updating ${PKG_NAME}/package.json"
+sed -i  "s/`grep version ${PKG_NAME}/package.json | cut -d':' -f 2 | sed 's/,//g'`/\"${PKG_VERSION}\"/g"  ${PKG_NAME}/package.json
+
+
+echo ""
+echo "Commiting changes"
+git diff
+
+git commit -a -m"SWAN Bump, updating package ${PKG_NAME} with version ${PKG_VERSION}"
+
+echo ""
+echo "Pushing changes to master"
+
+read -r -p "Do you want to continue [y/N] " response
+case "$response" in
+  [yY])
+    echo "Ok."
+  ;;
+  *)
+    echo "Exiting..."
+    echo ""
+    exit 1
+ ;;
+esac
+
+
+git push origin master
+
+echo "Creating a tag ${PKG_NAME}/${PKG_VERSION}"
+git tag -a "${PKG_NAME}/${PKG_VERSION}" -m "SWAN extension ${PKG_NAME} release for ${PKG_VERSION}"
+
+echo "Pushing the tag ${PKG_NAME}/${PKG_VERSION}"
+read -r -p "Do you want to continue [y/N] " response
+case "$response" in
+  [yY])
+    echo "Ok."
+  ;;
+  *)
+    echo "Exiting..."
+    echo ""
+    exit 1
+ ;;
+esac
+
+git push origin --tags
