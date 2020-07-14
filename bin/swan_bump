@@ -107,4 +107,4 @@ case "$response" in
  ;;
 esac
 
-git push origin --tags
+git push origin "${PKG_NAME}/${PKG_VERSION}"
