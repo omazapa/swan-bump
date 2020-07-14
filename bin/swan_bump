@@ -4,9 +4,9 @@
 
 function show_usage()
 {
-    echo "ex:  ./swan_bump -n=HdfsBrowser -v=1.1.1"
-    echo "ex (optional msg):  ./swan_bump -n=HdfsBrowser -v=1.1.1 -m='tag notes here'"
-    echo "ex:  ./swan_bump --pkg-name=HdfsBrowser --pkg-version=1.1.1"
+    echo "ex:  swan_bump -n=HdfsBrowser -v=1.1.1"
+    echo "ex (optional msg):  swan_bump -n=HdfsBrowser -v=1.1.1 -m='tag notes here'"
+    echo "ex:  swan_bump --pkg-name=HdfsBrowser --pkg-version=1.1.1"
     exit 1
 }
 
