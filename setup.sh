@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright CERN 
+# SWAN Team 2020
+
 
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do 
